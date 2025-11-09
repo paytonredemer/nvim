@@ -28,6 +28,9 @@ return {
     lazygit = {},
     notifier = { enabled = true },
     picker = {
+      db = {
+        sqlite3_path = vim.env.SQLITE3_LIB_PATH
+      },
       ui_select = true,
       formatters = {
         file = { truncate = 100 },
