@@ -79,7 +79,7 @@ vim.keymap.set("n", "gK", function()
   vim.diagnostic.config({ virtual_lines = new_config })
 end, { desc = "Toggle diagnostic virtual_lines" })
 
-vim.keymap.set("n", "<leader>ci", function()
+vim.keymap.set("n", "<leader>cc", function()
   vim.lsp.inline_completion.enable(not vim.lsp.inline_completion.is_enabled())
 end, { desc = "Toggle inline completion" })
 
@@ -92,6 +92,10 @@ end, {
   replace_keycodes = true,
   desc = "Get the current inline completion",
 })
+
+vim.keymap.set("n", "<leader>ci", function()
+  vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
+end, { desc = "Toggle inlay hints" })
 
 -- TODO: Add this to neorg plugin file and lazy load
 local get_neorg_link = function()
