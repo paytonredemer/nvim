@@ -97,9 +97,14 @@
             name = "payton-nvim";
             runtimeInputs = runtimePackages;
             text = ''
-              export XDG_CONFIG_HOME="${configHome}"
+              run_config="$(mktemp -d)"
+              trap 'rm -rf "$run_config"' EXIT
+              cp -RL "${configHome}/nvim" "$run_config/nvim"
+              chmod -R u+w "$run_config/nvim"
+
+              export XDG_CONFIG_HOME="$run_config"
               export SQLITE3_LIB_PATH="${pkgs.sqlite.out}/lib/libsqlite3.so"
-              exec nvim "$@"
+              nvim "$@"
             '';
           };
         };
