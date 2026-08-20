@@ -6,7 +6,7 @@ return {
     events = { "BufWritePost", "BufReadPost", "InsertLeave" },
     linters_by_ft = {
       gitcommit = { "codespell", "gitlint" },
-      markdown = { "alex", "codespell", "proselint" },
+      markdown = { "codespell", "proselint" },
       python = { "mypy" },
       tex = { "codespell", "proselint" },
     },
