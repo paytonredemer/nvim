@@ -27,7 +27,6 @@ return {
       "shfmt",
       "stylua",
       -- lint
-      "alex",
       "codespell",
       "gitlint",
       "mypy",
