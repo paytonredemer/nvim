@@ -54,9 +54,7 @@
               imagemagick
               ghostscript
               tectonic
-              mermaid-cli
               sqlite
-              yazi
 
               # LSP servers
               bash-language-server
