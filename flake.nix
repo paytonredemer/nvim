@@ -94,7 +94,7 @@
         {
           inherit pkgs runtimePackages;
           app = pkgs.writeShellApplication {
-            name = "payton-nvim";
+            name = "nvim";
             runtimeInputs = runtimePackages;
             text = ''
               run_config="$(mktemp -d)"
@@ -117,7 +117,7 @@
       apps = forAllSystems (system: {
         default = {
           type = "app";
-          program = "${(mkSystem system).app}/bin/payton-nvim";
+          program = "${(mkSystem system).app}/bin/nvim";
         };
       });
 
