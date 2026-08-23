@@ -1,4 +1,13 @@
-local commands = { "OverseerRun", "OverseerToggle" }
+local commands = {
+  "DiffviewClose",
+  "DiffviewFileHistory",
+  "DiffviewFocusFiles",
+  "DiffviewLog",
+  "DiffviewOpen",
+  "DiffviewRefresh",
+  "DiffviewToggleFiles",
+}
+
 local loaded = false
 local function load()
   if loaded then
@@ -9,8 +18,7 @@ local function load()
   for _, command in ipairs(commands) do
     pcall(vim.api.nvim_del_user_command, command)
   end
-  vim.cmd.packadd("overseer.nvim")
-  require("overseer").setup()
+  vim.cmd.packadd("diffview.nvim")
 end
 
 for _, name in ipairs(commands) do
@@ -21,11 +29,4 @@ for _, name in ipairs(commands) do
   end, { bang = true, nargs = "*" })
 end
 
-vim.keymap.set("n", "<leader>cb", function()
-  load()
-  vim.cmd.OverseerRun()
-end, { desc = "[C]ode [B]uild" })
-vim.keymap.set("n", "<leader>cp", function()
-  load()
-  vim.cmd("OverseerToggle!")
-end, { desc = "[C]ode [P]review" })
+return load

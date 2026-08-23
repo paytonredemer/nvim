@@ -1,36 +1,27 @@
-return {
-  "WhoIsSethDaniel/mason-tool-installer.nvim",
-  -- Only load if not using nix
-  cond = not (vim.fn.executable("nix") == 1),
-  dependencies = {
-    {
-      "williamboman/mason.nvim",
-      opts = {},
-    },
+if vim.fn.executable("nix") == 1 then
+  return
+end
+
+require("mason").setup()
+require("mason-tool-installer").setup({
+  ensure_installed = {
+    "bash-language-server",
+    "clangd",
+    "copilot-language-server",
+    "eslint-lsp",
+    "harper-ls",
+    "lua-language-server",
+    "pyright",
+    "rust-analyzer",
+    "typescript-language-server",
+    "clang-format",
+    "black",
+    "isort",
+    "shfmt",
+    "stylua",
+    "codespell",
+    "gitlint",
+    "mypy",
+    "proselint",
   },
-  opts = {
-    ensure_installed = {
-      -- lsp
-      "bash-language-server",
-      "clangd",
-      "copilot-language-server",
-      "eslint-lsp",
-      "harper-ls",
-      "lua-language-server",
-      "pyright",
-      "rust-analyzer",
-      "typescript-language-server",
-      -- format
-      "clang-format",
-      "black",
-      "isort",
-      "shfmt",
-      "stylua",
-      -- lint
-      "codespell",
-      "gitlint",
-      "mypy",
-      "proselint",
-    },
-  },
-}
+})

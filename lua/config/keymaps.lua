@@ -30,6 +30,7 @@ vim.keymap.set({ "n", "v" }, "<leader>D", [["_d]])
 
 -- toggle cursorline
 vim.keymap.set("n", "<leader>ul", "<cmd>set cursorline!<cr>", { desc = "[U]i Cursor[L]ine" })
+vim.keymap.set("n", "<leader>uS", "<cmd>setlocal spell! spell?<cr>", { desc = "[U]i toggle [S]pelling" })
 
 -- better macros
 vim.keymap.set("n", "Q", "@q")
@@ -97,7 +98,6 @@ vim.keymap.set("n", "<leader>ci", function()
   vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
 end, { desc = "Toggle inlay hints" })
 
--- TODO: Add this to neorg plugin file and lazy load
 local get_neorg_link = function()
   local lnum = vim.fn.getcurpos()[2]
 

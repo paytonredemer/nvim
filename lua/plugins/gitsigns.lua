@@ -1,13 +1,10 @@
-return {
-  "lewis6991/gitsigns.nvim",
-  event = { "BufReadPre", "BufNewFile" },
-  opts = {
-    on_attach = function(bufnr)
-      local function map(mode, l, r, desc)
-        vim.keymap.set(mode, l, r, { buffer = bufnr, desc = desc })
-      end
+require("gitsigns").setup({
+  on_attach = function(bufnr)
+    local function map(mode, l, r, desc)
+      vim.keymap.set(mode, l, r, { buffer = bufnr, desc = desc })
+    end
 
-      local gs = package.loaded.gitsigns
+    local gs = package.loaded.gitsigns
       -- stylua: ignore start
       map("n", "[h", gs.prev_hunk, "Previous hunk")
       map("n", "]h", gs.next_hunk, "Next hunk")
@@ -25,7 +22,6 @@ return {
       map("n", "<leader>ub", gs.toggle_current_line_blame, "[U]i [B]lame line")
       map("n", "<leader>us", gs.toggle_signs, "[U]i toggle git [S]igns")
       map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>", "inner hunk")
-      -- stylua: ignore end
-    end,
-  },
-}
+    -- stylua: ignore end
+  end,
+})
