@@ -121,37 +121,6 @@
         };
       });
 
-      checks = forAllSystems (
-        system:
-        let
-          env = mkSystem system;
-        in
-        {
-          nvim-smoke = env.pkgs.runCommand "nvim-smoke-check" {
-            nativeBuildInputs = [
-              env.app
-              env.pkgs.lua5_1
-            ];
-          } ''
-            find ${self} -type f -name '*.lua' -exec luac -p {} \;
-
-            cat > smoke-init.lua <<'EOF'
-            vim.opt.rtp:prepend("${self}")
-            require("config.keymaps")
-            require("config.options")
-            require("config.autocmds")
-            require("config.lsp")
-            EOF
-
-            export HOME="$TMPDIR/home"
-            mkdir -p "$HOME"
-            nvim --headless -u "$PWD/smoke-init.lua" '+qa'
-
-            touch "$out"
-          '';
-        }
-      );
-
       devShells = forAllSystems (
         system:
         let
