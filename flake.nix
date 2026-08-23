@@ -31,6 +31,18 @@
             inherit system;
             config.allowUnfreePredicate = pkg: nixpkgs.lib.getName pkg == "copilot-language-server";
           };
+          treesitterBundle = pkgs.vimPlugins.nvim-treesitter.withAllGrammars;
+          treesitterFiles = pkgs.symlinkJoin {
+            name = "nvim-treesitter-files";
+            paths = [ treesitterBundle ] ++ treesitterBundle.dependencies;
+          };
+          # Neovim only needs parsers and queries at runtime. Excluding the
+          # plugin directory avoids sourcing nvim-treesitter's startup scripts.
+          treesitterRuntime = pkgs.runCommand "nvim-treesitter-runtime" { } ''
+            mkdir -p "$out"
+            ln -s "${treesitterFiles}/parser" "$out/parser"
+            ln -s "${treesitterFiles}/queries" "$out/queries"
+          '';
           runtimePackages = [
             neovim-nightly-overlay.packages.${system}.default
           ]
@@ -92,7 +104,7 @@
           '';
         in
         {
-          inherit pkgs runtimePackages;
+          inherit pkgs runtimePackages treesitterRuntime;
           app = pkgs.writeShellApplication {
             name = "nvim";
             runtimeInputs = runtimePackages;
@@ -104,6 +116,8 @@
 
               export XDG_CONFIG_HOME="$run_config"
               export SQLITE3_LIB_PATH="${pkgs.sqlite.out}/lib/libsqlite3.so"
+              export NVIM_NIX_ENV=1
+              export NVIM_TREESITTER_RTP="${treesitterRuntime}"
               nvim "$@"
             '';
           };
@@ -135,6 +149,8 @@
               ln -s "$PWD" "$NVIM_DEV_XDG/nvim"
               export XDG_CONFIG_HOME="$NVIM_DEV_XDG"
               export SQLITE3_LIB_PATH="${env.pkgs.sqlite.out}/lib/libsqlite3.so"
+              export NVIM_NIX_ENV=1
+              export NVIM_TREESITTER_RTP="${env.treesitterRuntime}"
 
               cleanup_nvim_dev() {
                 rm -rf "$NVIM_DEV_XDG"

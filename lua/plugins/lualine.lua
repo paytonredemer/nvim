@@ -14,7 +14,7 @@ return {
         { "filetype", icon_only = true, separator = "", padding = { left = 1, right = 0 } },
         { "filename", path = 1 },
       },
-      lualine_x = { "" },
+      lualine_x = {},
       lualine_y = { "diagnostics" },
       lualine_z = { "location" },
     },

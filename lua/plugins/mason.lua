@@ -1,7 +1,7 @@
 return {
   "WhoIsSethDaniel/mason-tool-installer.nvim",
   -- Only load if not using nix
-  cond = not (vim.fn.executable("nix") == 1),
+  cond = vim.env.NVIM_NIX_ENV ~= "1",
   dependencies = {
     {
       "williamboman/mason.nvim",
@@ -24,6 +24,7 @@ return {
       "clang-format",
       "black",
       "isort",
+      "nixfmt",
       "shfmt",
       "stylua",
       -- lint
@@ -31,6 +32,7 @@ return {
       "gitlint",
       "mypy",
       "proselint",
+      "shellcheck",
     },
   },
 }

@@ -1,11 +1,14 @@
 return {
   "stevearc/conform.nvim",
-  dependencies = { "WhoIsSethDaniel/mason-tool-installer.nvim" },
-  event = { "BufReadPre", "BufNewFile" },
   opts = {
-    lua = { "stylua" },
-    python = { "isort", "black" },
-    sh = { "shfmt" },
+    formatters_by_ft = {
+      c = { "clang-format" },
+      cpp = { "clang-format" },
+      lua = { "stylua" },
+      nix = { "nixfmt" },
+      python = { "isort", "black" },
+      sh = { "shfmt" },
+    },
   },
   keys = {
     {

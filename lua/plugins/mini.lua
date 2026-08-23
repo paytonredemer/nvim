@@ -1,5 +1,6 @@
 return {
   "nvim-mini/mini.surround",
+  event = "VeryLazy",
   opts = {
     -- Mimics tpope/vim-surround (taken from docs)
     mappings = {

@@ -29,7 +29,7 @@ return {
     notifier = { enabled = true },
     picker = {
       db = {
-        sqlite3_path = vim.env.SQLITE3_LIB_PATH
+        sqlite3_path = vim.env.SQLITE3_LIB_PATH,
       },
       ui_select = true,
       formatters = {
@@ -41,13 +41,14 @@ return {
     },
     quickfile = { enabled = true },
     statuscolumn = { enabled = true },
+    terminal = { win = { wo = { winbar = "" } } },
     words = { enabled = true },
-    -- Look into the options more
     zen = { toggles = { dim = false }, win = { backdrop = { transparent = false, blend = 90 } } },
   },
   -- stylua: ignore
   keys = {
     { "<leader>.",        function() Snacks.scratch() end,                                        desc = "Toggle Scratch Buffer" },
+    { "<C-g>",           function() Snacks.terminal.toggle() end,                                desc = "Toggle terminal", mode = { "n", "t" } },
     { "<leader>uz",       function() Snacks.zen() end,                                            desc = "[U]i [Z]en toggle" },
     { "<leader>bd",       function() Snacks.bufdelete() end,                                      desc = "Delete Buffer" },
     -- General

@@ -31,6 +31,5 @@ vim.o.foldmethod = "expr"
 vim.o.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 
 -- spelling
-vim.o.spell = true
 vim.o.spelllang = "en_us"
 vim.o.spelloptions = "camel"

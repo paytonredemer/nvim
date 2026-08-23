@@ -1,6 +1,11 @@
+if vim.env.NVIM_NIX_ENV == "1" then
+  vim.opt.runtimepath:prepend(vim.env.NVIM_TREESITTER_RTP)
+end
+
 return {
   {
     "nvim-treesitter/nvim-treesitter",
+    cond = vim.env.NVIM_NIX_ENV ~= "1",
     lazy = false,
     build = ":TSUpdate",
     config = function()

@@ -1,6 +1,5 @@
 return {
   "mfussenegger/nvim-lint",
-  dependencies = { "WhoIsSethDaniel/mason-tool-installer.nvim" },
   event = { "BufReadPre", "BufNewFile" },
   opts = {
     events = { "BufWritePost", "BufReadPost", "InsertLeave" },
@@ -8,6 +7,7 @@ return {
       gitcommit = { "codespell", "gitlint" },
       markdown = { "codespell", "proselint" },
       python = { "mypy" },
+      sh = { "shellcheck" },
       tex = { "codespell", "proselint" },
     },
   },
