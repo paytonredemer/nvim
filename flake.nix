@@ -48,39 +48,39 @@
           ]
           ++ (with pkgs; [
             # General Neovim dependencies
-            tree-sitter
-            luajitPackages.luarocks
-            gcc
-            nodejs_22
-            ripgrep
             fd
-            lua5_1
-            luajit
             fzf
+            gcc
+            ghostscript
             git
             gnumake
             imagemagick
-            ghostscript
-            tectonic
+            lua5_1
+            luajit
+            luajitPackages.luarocks
+            nodejs_22
+            python3
+            ripgrep
             sqlite
+            tectonic
 
             # LSP servers
             bash-language-server
             clang-tools
+            copilot-language-server
             harper
             lua-language-server
             nixd
-            vscode-langservers-extracted
             pyright
             rust-analyzer
             typescript-language-server
-            copilot-language-server
+            vscode-langservers-extracted
 
             # Linters and formatters
-            isort
             black
             codespell
             gitlint
+            isort
             mypy
             nixfmt
             proselint
