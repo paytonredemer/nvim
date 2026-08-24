@@ -3,6 +3,7 @@ vim.o.relativenumber = true
 vim.o.wrap = false
 vim.o.termguicolors = true
 vim.o.winborder = "rounded"
+vim.o.exrc = true
 
 require("vim._core.ui2").enable()
 
@@ -29,7 +30,6 @@ vim.opt.listchars = { eol = "↵", trail = "~", tab = ">-", nbsp = "␣" }
 vim.o.foldenable = true
 vim.o.foldlevel = 99
 vim.o.foldmethod = "expr"
--- can also use "v:lua.vim.lsp.foldexpr()" ... probably should do in file type plugin
 vim.o.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 
 -- spelling

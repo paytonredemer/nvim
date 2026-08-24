@@ -38,18 +38,6 @@ return {
       command = vim.fn.exepath("lldb-dap"),
       name = "lldb",
     }
-
-    dap.configurations.cpp = {
-      {
-        name = "Current Build",
-        type = "lldb",
-        request = "launch",
-        program = "${workspaceFolder}/out/current/WX",
-        args = { "-fs" },
-        cwd = "${workspaceFolder}/out/current",
-      },
-    }
-    dap.configurations.c = dap.configurations.cpp
   end,
   -- stylua: ignore
   keys = {

@@ -15,7 +15,7 @@ return {
         { "filename", path = 1 },
       },
       lualine_x = {},
-      lualine_y = { "diagnostics" },
+      lualine_y = { "lsp_status", "diagnostics" },
       lualine_z = { "location" },
     },
     inactive_sections = {
