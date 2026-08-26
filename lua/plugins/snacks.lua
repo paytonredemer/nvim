@@ -1,4 +1,4 @@
-local config_dir = vim.env.MYVIMRC and vim.fn.fnamemodify(vim.env.MYVIMRC, ":p:h") or vim.fn.stdpath("config")
+local config_dir = vim.env.NVIM_CONFIG_DIR or vim.fn.stdpath("config")
 
 return {
   "folke/snacks.nvim",
