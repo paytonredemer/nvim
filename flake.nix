@@ -30,13 +30,13 @@
         let
           pkgs = import nixpkgs {
             inherit system;
+            overlays = [ neovim-nightly-overlay.overlays.default ];
             config.allowUnfreePredicate =
               pkg: nixpkgs.lib.getName pkg == "copilot-language-server";
           };
           inherit (pkgs) lib;
 
-          neovimNightly =
-            neovim-nightly-overlay.packages.${system}.default;
+          neovimNightly = pkgs.neovim-unwrapped;
 
           treesitterBundle =
             pkgs.vimPlugins.nvim-treesitter.withAllGrammars;
