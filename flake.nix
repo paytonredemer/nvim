@@ -24,30 +24,34 @@
         "aarch64-darwin"
       ];
       forAllSystems = nixpkgs.lib.genAttrs systems;
+
       mkSystem =
         system:
         let
           pkgs = import nixpkgs {
             inherit system;
-            config.allowUnfreePredicate = pkg: nixpkgs.lib.getName pkg == "copilot-language-server";
+            config.allowUnfreePredicate =
+              pkg: nixpkgs.lib.getName pkg == "copilot-language-server";
           };
-          treesitterBundle = pkgs.vimPlugins.nvim-treesitter.withAllGrammars;
+          inherit (pkgs) lib;
+
+          neovimNightly =
+            neovim-nightly-overlay.packages.${system}.default;
+
+          treesitterBundle =
+            pkgs.vimPlugins.nvim-treesitter.withAllGrammars;
           treesitterFiles = pkgs.symlinkJoin {
             name = "nvim-treesitter-files";
             paths = [ treesitterBundle ] ++ treesitterBundle.dependencies;
           };
-          # Neovim only needs parsers and queries at runtime. Excluding the
-          # plugin directory avoids sourcing nvim-treesitter's startup scripts.
-          treesitterRuntime = pkgs.runCommand "nvim-treesitter-runtime" { } ''
-            mkdir -p "$out"
-            ln -s "${treesitterFiles}/parser" "$out/parser"
-            ln -s "${treesitterFiles}/queries" "$out/queries"
-          '';
-          runtimePackages = [
-            neovim-nightly-overlay.packages.${system}.default
-          ]
-          ++ (with pkgs; [
-            # General Neovim dependencies
+          treesitterRuntime =
+            pkgs.runCommand "nvim-treesitter-runtime" { } ''
+              mkdir -p "$out"
+              ln -s "${treesitterFiles}/parser" "$out/parser"
+              ln -s "${treesitterFiles}/queries" "$out/queries"
+            '';
+
+          runtimePackages = with pkgs; [
             fd
             fzf
             gcc
@@ -64,7 +68,6 @@
             sqlite
             tectonic
 
-            # LSP servers
             bash-language-server
             clang-tools
             copilot-language-server
@@ -76,7 +79,6 @@
             typescript-language-server
             vscode-langservers-extracted
 
-            # Linters and formatters
             black
             codespell
             gitlint
@@ -88,53 +90,71 @@
             shfmt
             stylua
 
-            # Debug adapter dependencies
             lldb
-          ])
-          ++ (
-            with pkgs;
-            lib.optionals stdenv.hostPlatform.isLinux [
-              inotify-tools
-              xclip
-            ]
-          );
-          configHome = pkgs.runCommand "payton-nvim-config" { } ''
-            mkdir -p "$out"
-            ln -s ${self} "$out/nvim"
+          ]
+          ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
+            pkgs.inotify-tools
+            pkgs.xclip
+          ];
+
+          wrappedNeovim =
+            pkgs.wrapNeovimUnstable neovimNightly {
+              luaRcContent = ''
+                vim.g.packaged_config_dir = "${self}"
+                vim.opt.runtimepath:prepend("${self}")
+                dofile("${self}/init.lua")
+              '';
+
+              wrapperArgs = [
+                "--suffix"
+                "PATH"
+                ":"
+                (lib.makeBinPath runtimePackages)
+                "--set"
+                "NVIM_NIX_ENV"
+                "1"
+                "--set"
+                "NVIM_TREESITTER_RTP"
+                "${treesitterRuntime}"
+                "--set"
+                "SQLITE3_LIB_PATH"
+                "${pkgs.sqlite.out}/lib/libsqlite3.so"
+              ];
+            };
+
+          devNeovim = pkgs.writeShellScriptBin "nvim" ''
+            exec "${neovimNightly}/bin/nvim" \
+              --cmd "lua vim.g.packaged_config_dir = vim.env.NVIM_DEV_CONFIG" \
+              --cmd "set runtimepath^=$NVIM_DEV_CONFIG" \
+              -u "$NVIM_DEV_CONFIG/init.lua" \
+              "$@"
           '';
         in
         {
-          inherit pkgs runtimePackages treesitterRuntime;
-          app = pkgs.writeShellApplication {
-            name = "nvim";
-            runtimeInputs = runtimePackages;
-            text = ''
-              run_config="$(mktemp -d)"
-              trap 'rm -rf "$run_config"' EXIT
-              cp -RL "${configHome}/nvim" "$run_config/nvim"
-              chmod -R u+w "$run_config/nvim"
-
-              export NVIM_CONFIG_DIR="$run_config/nvim"
-              export SQLITE3_LIB_PATH="${pkgs.sqlite.out}/lib/libsqlite3.so"
-              export NVIM_NIX_ENV=1
-              export NVIM_TREESITTER_RTP="${treesitterRuntime}"
-              nvim \
-                --cmd "set runtimepath^=$run_config/nvim" \
-                -u "$run_config/nvim/init.lua" \
-                "$@"
-            '';
-          };
+          inherit
+            pkgs
+            runtimePackages
+            treesitterRuntime
+            wrappedNeovim
+            devNeovim
+            ;
         };
     in
     {
-      packages = forAllSystems (system: {
-        default = (mkSystem system).app;
-      });
+      packages = forAllSystems (
+        system:
+        let
+          env = mkSystem system;
+        in
+        {
+          default = env.wrappedNeovim;
+        }
+      );
 
       apps = forAllSystems (system: {
         default = {
           type = "app";
-          program = "${(mkSystem system).app}/bin/nvim";
+          program = "${(mkSystem system).wrappedNeovim}/bin/nvim";
         };
       });
 
@@ -145,22 +165,15 @@
         in
         {
           default = env.pkgs.mkShell {
-            packages = env.runtimePackages;
+            packages = [ env.devNeovim ] ++ env.runtimePackages;
 
             shellHook = ''
-              export NVIM_DEV_XDG="$(mktemp -d)"
-              ln -s "$PWD" "$NVIM_DEV_XDG/nvim"
-              export XDG_CONFIG_HOME="$NVIM_DEV_XDG"
-              export SQLITE3_LIB_PATH="${env.pkgs.sqlite.out}/lib/libsqlite3.so"
+              export NVIM_DEV_CONFIG="$PWD"
               export NVIM_NIX_ENV=1
               export NVIM_TREESITTER_RTP="${env.treesitterRuntime}"
+              export SQLITE3_LIB_PATH="${env.pkgs.sqlite.out}/lib/libsqlite3.so"
 
-              cleanup_nvim_dev() {
-                rm -rf "$NVIM_DEV_XDG"
-              }
-              trap cleanup_nvim_dev EXIT
-
-              echo "Neovim is using the live config at $PWD"
+              echo "Neovim is using the live config at $NVIM_DEV_CONFIG"
             '';
           };
         }
