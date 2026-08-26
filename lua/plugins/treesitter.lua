@@ -1,6 +1,4 @@
-if vim.env.NVIM_NIX_ENV == "1" then
-  vim.opt.runtimepath:prepend(vim.env.NVIM_TREESITTER_RTP)
-end
+-- lazyCat adds nixCats' packaged parser directory to runtimepath.
 
 return {
   {
