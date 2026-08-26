@@ -1,4 +1,4 @@
-local config_dir = vim.env.NVIM_CONFIG_DIR or vim.fn.stdpath("config")
+local config_dir = nixCats.configDir
 
 return {
   "folke/snacks.nvim",
