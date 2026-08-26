@@ -1,4 +1,4 @@
-local config_dir = vim.env.MYVIMRC and vim.fn.fnamemodify(vim.env.MYVIMRC, ":p:h") or config_dir
+local config_dir = vim.env.MYVIMRC and vim.fn.fnamemodify(vim.env.MYVIMRC, ":p:h") or vim.fn.stdpath("config")
 
 return {
   "folke/snacks.nvim",
@@ -17,7 +17,7 @@ return {
           { icon = " ", key = "t", desc = "Find Text", action = ":lua Snacks.picker.grep()" },
           { icon = " ", key = "g", desc = "Git", action = ":Neogit" },
           { icon = " ", key = "e", desc = "Explorer", action = ":Oil" },
-          { icon = " ", key = "c", desc = "Config", action = ":lua Snacks.picker.files({ cwd = vim.fn.stdpath('config') })" },
+          { icon = " ", key = "c", desc = "Config", action = function() Snacks.picker.files({ cwd = config_dir }) end },
           { icon = " ", key = "s", desc = "Restore Session", section = "session" },
           { icon = "󰒲 ", key = "l", desc = "Lazy", action = ":Lazy" },
           { icon = " ", key = "q", desc = "Quit", action = ":qa" },
