@@ -114,11 +114,13 @@
               cp -RL "${configHome}/nvim" "$run_config/nvim"
               chmod -R u+w "$run_config/nvim"
 
-              export XDG_CONFIG_HOME="$run_config"
               export SQLITE3_LIB_PATH="${pkgs.sqlite.out}/lib/libsqlite3.so"
               export NVIM_NIX_ENV=1
               export NVIM_TREESITTER_RTP="${treesitterRuntime}"
-              nvim "$@"
+              nvim \
+                --cmd "set runtimepath^=$run_config/nvim" \
+                -u "$run_config/nvim/init.lua" \
+                "$@"
             '';
           };
         };
