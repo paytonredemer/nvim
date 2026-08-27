@@ -103,6 +103,9 @@
                 "PATH"
                 ":"
                 (lib.makeBinPath runtimePackages)
+                "--set-default"
+                "NVIM_APPNAME"
+                "payton-nvim"
                 "--set"
                 "NVIM_NIX_ENV"
                 "1"
