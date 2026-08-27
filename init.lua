@@ -4,13 +4,11 @@ require("config.keymaps")
 require("config.options")
 require("config.autocmds")
 
-local config_dir = vim.env.NVIM_CONFIG_DIR
-
 require("lazy").setup("plugins", {
-  lockfile = config_dir .. "/lazy-lock.json",
+  lockfile = vim.fs.joinpath(vim.env.NVIM_CONFIG_DIR or vim.fn.stdpath("config"), "lazy-lock.json"),
   performance = {
     rtp = {
-      paths = { config_dir },
+      paths = { vim.env.NVIM_CONFIG_DIR },
       disabled_plugins = {
         "gzip",
         -- "matchit",
