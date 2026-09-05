@@ -21,10 +21,6 @@ vim.keymap.set({ "n", "v" }, "<leader>D", [["_d]])
 -- toggle cursorline
 vim.keymap.set("n", "<leader>ul", "<cmd>set cursorline!<cr>", { desc = "[U]i Cursor[L]ine" })
 
--- better macros
-vim.keymap.set("n", "Q", "@q")
-vim.keymap.set("x", "Q", ":norm @q<CR>")
-
 vim.keymap.set("t", "<esc><esc>", "<c-\\><c-n>")
 
 vim.keymap.set("n", "<M-,>", "<c-w>5<")
