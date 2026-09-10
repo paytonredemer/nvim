@@ -2,6 +2,15 @@ if vim.env.NVIM_NIX_ENV == "1" then
   vim.opt.runtimepath:prepend(vim.env.NVIM_TREESITTER_RTP)
 end
 
+-- Start native highlighting on demand, including when Nix supplies the parsers.
+vim.api.nvim_create_autocmd("FileType", {
+  group = vim.api.nvim_create_augroup("treesitter_highlight", { clear = true }),
+  callback = function(event)
+    -- Some filetypes have no installed parser.
+    pcall(vim.treesitter.start, event.buf)
+  end,
+})
+
 return {
   {
     "nvim-treesitter/nvim-treesitter",

@@ -20,6 +20,7 @@ vim.o.smartcase = true
 vim.o.colorcolumn = "80"
 vim.o.cursorline = true
 vim.o.scrolloff = 999
+vim.o.scrolloffpad = 1
 vim.o.signcolumn = "yes"
 
 vim.o.list = true
