@@ -1,16 +1,3 @@
--- Skip built-in plugins that this configuration does not use.
-for _, variable in ipairs({
-  "loaded_gzip",
-  "loaded_netrwPlugin",
-  "loaded_remote_plugins",
-  "loaded_tarPlugin",
-  "loaded_2html_plugin",
-  "loaded_tutor_mode_plugin",
-  "loaded_nvim_zip_plugin",
-}) do
-  vim.g[variable] = 1
-end
-
 vim.o.number = true
 vim.o.relativenumber = true
 vim.o.wrap = false
