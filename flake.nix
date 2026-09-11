@@ -94,52 +94,40 @@
               pkgs.xclip
             ];
 
-          mkNeovim =
-            luaRcContent:
-            pkgs.wrapNeovimUnstable neovimNightly {
-              inherit luaRcContent;
-              wrapperArgs = [
-                "--suffix"
-                "PATH"
-                ":"
-                (lib.makeBinPath runtimePackages)
-                "--set-default"
-                "NVIM_APPNAME"
-                "payton-nvim"
-                "--set"
-                "NVIM_NIX_ENV"
-                "1"
-                "--set"
-                "NVIM_TREESITTER_RTP"
-                "${treesitterRuntime}"
-                "--set"
-                "SQLITE3_LIB_PATH"
-                "${pkgs.sqlite.out}/lib/libsqlite3.so"
-              ];
-            };
-
-          wrappedNeovim = mkNeovim ''
-            vim.env.NVIM_CONFIG_DIR = "${self}"
-            vim.opt.runtimepath:prepend(vim.env.NVIM_CONFIG_DIR)
-            dofile(vim.env.NVIM_CONFIG_DIR .. "/init.lua")
-          '';
-
-          devNeovim = mkNeovim ''
-            vim.env.NVIM_CONFIG_DIR = vim.env.NVIM_DEV_CONFIG
-            vim.opt.runtimepath:prepend(vim.env.NVIM_CONFIG_DIR)
-            dofile(vim.env.NVIM_CONFIG_DIR .. "/init.lua")
-          '';
+          wrappedNeovim = pkgs.wrapNeovimUnstable neovimNightly {
+            luaRcContent = ''
+              dofile(vim.fs.joinpath(vim.env.NVIM_CONFIG_DIR, "init.lua"))
+            '';
+            wrapperArgs = [
+              "--suffix"
+              "PATH"
+              ":"
+              (lib.makeBinPath runtimePackages)
+              "--set-default"
+              "NVIM_APPNAME"
+              "payton-nvim"
+              "--set-default"
+              "NVIM_CONFIG_DIR"
+              "${self}"
+              "--set"
+              "NVIM_NIX_ENV"
+              "1"
+              "--set"
+              "NVIM_TREESITTER_RTP"
+              "${treesitterRuntime}"
+              "--set"
+              "SQLITE3_LIB_PATH"
+              "${pkgs.sqlite.out}/lib/libsqlite3${pkgs.stdenv.hostPlatform.extensions.sharedLibrary}"
+            ];
+          };
 
           devShell = pkgs.mkShell {
-            packages = [ devNeovim ] ++ runtimePackages;
+            packages = [ wrappedNeovim ] ++ runtimePackages;
 
             shellHook = ''
-              export NVIM_DEV_CONFIG="$PWD"
-              export NVIM_NIX_ENV=1
-              export NVIM_TREESITTER_RTP="${treesitterRuntime}"
-              export SQLITE3_LIB_PATH="${pkgs.sqlite.out}/lib/libsqlite3.so"
+              export NVIM_CONFIG_DIR="$PWD"
 
-              echo "Neovim is using the live config at $NVIM_DEV_CONFIG"
+              echo "Neovim is using the live config at $NVIM_CONFIG_DIR"
             '';
           };
         in

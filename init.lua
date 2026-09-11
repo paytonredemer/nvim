@@ -1,27 +1,16 @@
-require("config.lazy")
+vim.loader.enable()
 
-require("config.keymaps")
-require("config.options")
-require("config.autocmds")
+local config_dir = vim.fn.stdpath("config")
+if vim.env.NVIM_NIX_ENV == "1" then
+  config_dir = assert(vim.env.NVIM_CONFIG_DIR, "NVIM_CONFIG_DIR is required in the Nix environment")
+  vim.opt.runtimepath:prepend(config_dir)
+  vim.opt.runtimepath:append(vim.fs.joinpath(config_dir, "after"))
+end
 
-local config_dir = vim.env.NVIM_CONFIG_DIR or vim.fn.stdpath("config")
+vim.o.packlockfile = vim.fs.joinpath(config_dir, "nvim-pack-lock.json")
 
-require("lazy").setup("plugins", {
-  lockfile = vim.fs.joinpath(config_dir, "lazy-lock.json"),
-  performance = {
-    rtp = {
-      paths = { config_dir, vim.fs.joinpath(config_dir, "after") },
-      disabled_plugins = {
-        "gzip",
-        -- "matchit",
-        -- "matchparen",
-        "netrwPlugin",
-        "rplugin",
-        "tarPlugin",
-        "tohtml",
-        "tutor",
-        "zipPlugin",
-      },
-    },
-  },
-})
+require("pack")
+
+require("options")
+require("keymaps")
+require("autocmds")
