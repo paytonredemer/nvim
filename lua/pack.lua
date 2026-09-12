@@ -12,15 +12,8 @@ local function register_one(spec)
   spec = type(spec) == "string" and { src = spec } or spec
   spec.name = spec.name or plugin_name(spec.src)
 
-  if not spec.name then
-    error("Could not infer a plugin name from: " .. vim.inspect(spec.src))
-  end
-
   local existing = specs_by_name[spec.name]
   if existing then
-    if existing.src ~= spec.src then
-      error(("Plugin %s has conflicting sources"):format(spec.name))
-    end
     return existing
   end
 
@@ -61,10 +54,22 @@ function M.load(plugins)
       -- Adding here installs a new lazy plugin when it is first used. The
       -- explicit packadd also works after :PackInstall's no-op loader.
       vim.pack.add({ plugin }, { load = function() end })
-      vim.cmd.packadd(name)
+      vim.cmd.packadd({ vim.fn.escape(name, " "), magic = { file = false } })
+      -- Like native vim.pack loading, source after/plugin ourselves for late
+      -- loads. During startup Neovim will source these in its normal pass.
+      if vim.v.vim_did_enter == 1 then
+        local path = vim.pack.get({ name }, { info = false })[1].path
+        for _, script in ipairs(vim.fn.glob(path .. "/after/plugin/**/*.{vim,lua}", false, true)) do
+          vim.cmd.source({ script, magic = { file = false } })
+        end
+      end
       loaded[name] = true
     end
   end
+end
+
+function M.sync()
+  vim.pack.update(nil, { target = "lockfile" })
 end
 
 function M.prune()
@@ -98,7 +103,7 @@ function M.once(callback)
   end
 end
 
--- Defer nonessential setup until Neovim has finished starting.
+-- Schedule nonessential setup; this does not wait for idle or a rendered UI.
 function M.later(callback)
   vim.schedule(callback)
 end
@@ -118,6 +123,10 @@ vim.api.nvim_create_user_command("PackInstall", M.install, {
 
 vim.api.nvim_create_user_command("PackPrune", M.prune, {
   desc = "Remove installed plugins no longer declared in the config",
+})
+
+vim.api.nvim_create_user_command("PackSync", M.sync, {
+  desc = "Review and restore installed plugins to the lockfile revisions",
 })
 
 return M

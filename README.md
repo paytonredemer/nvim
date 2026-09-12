@@ -25,6 +25,16 @@ No Nix environment variables are required: Neovim keeps its normal runtime
 path, uses the lockfile from the configuration directory, and enables Mason and
 Treesitter's own parser installation. This applies to Windows and Linux.
 
+Install Git and the tools required by Mason (`:checkhealth mason`). Parser
+installation additionally requires `tree-sitter` CLI **0.26.1 or newer** (use
+your system package manager or an upstream release, not npm), `curl`, `tar`,
+and a C compiler on PATH. On Linux, install GCC or Clang; on Windows, use a
+working LLVM/MinGW toolchain or launch Neovim from a Visual Studio developer
+shell with `cl` available. Mason does not provision these parser prerequisites.
+The config assumes these dependencies are installed. Use
+`:checkhealth nvim-treesitter` to diagnose build failures.
+Highlighting is retried for open buffers when parser installation finishes.
+
 ## Plugins
 
 Requires Neovim nightly with `vim.pack` and the `packlockfile` option.
@@ -35,15 +45,16 @@ can see them before they load; eager plugins pass the shorthand directly to
 `pack.load()`. The numbered files load the colorscheme, mini.icons compatibility
 provider, and Snacks before the remaining UI configuration. The small
 `lua/pack.lua` helper installs plugins on first use, defers nonessential
-setup until after startup, shares one-time initialization, and replaces
-first-use Lua mappings with their normal actions.
+setup with `vim.schedule` (not an idle/render guarantee), shares one-time
+initialization, and replaces first-use Lua mappings with their normal actions.
+For repeated declarations, the first declaration is used.
 
 | Loading | Plugins |
 | --- | --- |
-| Startup | Kanagawa, mini.icons, Snacks, Lualine, vim-sleuth, tmux navigator |
+| Startup | Kanagawa, mini.icons, Snacks, Lualine, vim-sleuth, tmux navigator, LSP configuration |
 | After startup | Oil, mini.surround, ts-comments, hlslens, which-key |
 | Native lightweight entry points | bqf (quickfix ftplugin), Overseer (commands) |
-| First file read/new file | LSP, Gitsigns, lint, todo-comments, Treesitter context |
+| First file read/new file | Gitsigns, lint, todo-comments, Treesitter context |
 | First file read or dashboard restore | Persistence |
 | First insert | Blink and friendly-snippets |
 | Lua / Markdown filetype | lazydev / render-markdown |
@@ -53,6 +64,7 @@ first-use Lua mappings with their normal actions.
 | Startup outside Nix | Mason and mason-tool-installer, Treesitter parser installation |
 
 Todo and Treesitter context mappings also work before opening a file.
+LSP servers still start only for matching buffers, including unnamed buffers.
 The dashboard uses `:RestoreSession`, which initializes Persistence if needed.
 Oil loads early so opening a directory works. Nix supplies parser/query files;
 outside Nix, Treesitter installs the configured parsers and updates them on
@@ -75,6 +87,21 @@ the config. Inspect packages with `:lua vim.print(vim.pack.get())`. The old
 manager's dashboard entry and search mapping have been removed. lazydev is
 still used for Lua development; it is independent of the old plugin manager.
 
-Run plugin maintenance from `nix develop`, where the configuration and lockfile
-point directly at this writable checkout. The packaged configuration reads the
-pinned lockfile from the Nix store and does not create a writable copy.
+Run plugin updates and declaration changes from `nix develop`, where the
+configuration and lockfile point directly at this writable checkout. Pack
+always uses that configured lockfile directly; no temporary copy is created.
+
+Deploying or rolling back the Nix configuration does **not** automatically
+switch already-installed plugin revisions. After changing generations, start
+the packaged Neovim and run `:PackSync`. Review the changes and
+`:write` to restore the locked revisions, then restart Neovim. Unlike
+`:packupdate`, this restores the lockfile's revisions instead of selecting new
+ones, and includes unloaded plugins. It may fetch missing Git history.
+On the tested nightly, restoring against a read-only lockfile applies the
+plugin checkouts, then reports a permission error when Neovim tries to write
+the lockfile. This final write error is accepted; the original stays unchanged.
+Other errors, such as fetch or checkout failures, can still prevent restoration.
+Development and
+packaged Neovim share the same plugin directory; close other instances before
+synchronizing. Run `:PackPrune`
+separately if the matching config no longer declares an installed plugin.
