@@ -2,16 +2,15 @@ local pack = require("pack")
 local plugins = pack.register({
   pack.gh("mfussenegger/nvim-dap"),
   pack.gh("igorlfs/nvim-dap-view"),
-  pack.gh("theHamsta/nvim-dap-virtual-text"),
 })
 
 local load = pack.once(function()
   pack.load(plugins)
   require("dap-view").setup({
+    virtual_text = { enabled = true },
     winbar = { controls = { enabled = true } },
     windows = { terminal = { hide = { "lldb" } } },
   })
-  require("nvim-dap-virtual-text").setup()
 
   local dap, dv = require("dap"), require("dap-view")
   dap.listeners.before.attach["dap-view-config"] = function()
