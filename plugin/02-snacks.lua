@@ -62,7 +62,8 @@ vim.keymap.set("n", "<C-p>", function() Snacks.picker.smart() end, { desc = "Sma
 -- find
 vim.keymap.set("n", "<leader>fc", function() Snacks.picker.files({ cwd = config_dir }) end, { desc = "Find Config File" })
 vim.keymap.set("n", "<leader>ff", function() Snacks.picker.files() end, { desc = "Find Files" })
-vim.keymap.set("n", "<leader>fp", function() Snacks.picker.git_files() end, { desc = "Find Git Files" })
+vim.keymap.set("n", "<leader>fg", function() Snacks.picker.git_files() end, { desc = "Find Git Files" })
+vim.keymap.set("n", "<leader>fp", function() Snacks.picker.projects() end, { desc = "Find Projects" })
 vim.keymap.set("n", "<leader>fr", function() Snacks.picker.recent() end, { desc = "Recent" })
 vim.keymap.set("n", "<leader>fs", function() Snacks.picker.spelling() end, { desc = "Find Spelling Options" })
 -- search
@@ -85,7 +86,6 @@ vim.keymap.set("n", "<leader>sr", function() Snacks.picker.resume() end, { desc 
 vim.keymap.set("n", "<leader>sR", function() Snacks.picker.registers() end, { desc = "Registers" })
 vim.keymap.set("n", "<leader>su", function() Snacks.picker.undo() end, { desc = "Undo" })
 vim.keymap.set("n", "<leader>sz", function() Snacks.picker.zoxide() end, { desc = "Zoxide" })
-vim.keymap.set("n", "<leader>qp", function() Snacks.picker.projects() end, { desc = "Projects" })
 vim.keymap.set("n", "<leader>uC", function() Snacks.picker.colorschemes() end, { desc = "Colorschemes" })
 -- Grep
 vim.keymap.set("n", "<leader>sb", function() Snacks.picker.lines() end, { desc = "Buffer Lines" })

@@ -12,14 +12,10 @@ pack.keymap("n", "<leader>k", load, function() require("grapple").toggle_tags() 
 pack.keymap("n", "<leader>K", load, function() require("grapple").toggle_scopes() end, { desc = "Grapple toggle scopes" })
 pack.keymap("n", "<leader>j", load, function() require("grapple").cycle_tags("next") end, { desc = "Grapple cycle forward" })
 pack.keymap("n", "<leader>J", load, function() require("grapple").cycle_tags("prev") end, { desc = "Grapple cycle backward" })
-pack.keymap("n", "<leader>1", load, function() require("grapple").select({ index = 1 }) end, { desc = "Grapple select 1" })
-pack.keymap("n", "<leader>2", load, function() require("grapple").select({ index = 2 }) end, { desc = "Grapple select 2" })
-pack.keymap("n", "<leader>3", load, function() require("grapple").select({ index = 3 }) end, { desc = "Grapple select 3" })
-pack.keymap("n", "<leader>4", load, function() require("grapple").select({ index = 4 }) end, { desc = "Grapple select 4" })
-pack.keymap("n", "<leader>5", load, function() require("grapple").select({ index = 5 }) end, { desc = "Grapple select 5" })
-pack.keymap("n", "<leader>6", load, function() require("grapple").select({ index = 6 }) end, { desc = "Grapple select 6" })
-pack.keymap("n", "<leader>7", load, function() require("grapple").select({ index = 7 }) end, { desc = "Grapple select 7" })
-pack.keymap("n", "<leader>8", load, function() require("grapple").select({ index = 8 }) end, { desc = "Grapple select 8" })
-pack.keymap("n", "<leader>9", load, function() require("grapple").select({ index = 9 }) end, { desc = "Grapple select 9" })
-pack.keymap("n", "<leader>0", load, function() require("grapple").select({ index = 10 }) end, { desc = "Grapple select 10" })
 -- stylua: ignore end
+
+for index = 1, 10 do
+  pack.keymap("n", "<leader>" .. (index % 10), load, function()
+    require("grapple").select({ index = index })
+  end, { desc = "Grapple select " .. index })
+end

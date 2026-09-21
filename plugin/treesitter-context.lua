@@ -13,6 +13,11 @@ vim.api.nvim_create_autocmd({ "BufReadPre", "BufNewFile" }, {
 pack.keymap("n", "<leader>uc", load, function()
   require("treesitter-context").toggle()
 end, { desc = "[U]i Treesitter [C]ontext toggle" })
-pack.keymap("n", "[c", load, function()
-  require("treesitter-context").go_to_context(vim.v.count1)
-end, { desc = "Jump to context" })
+vim.keymap.set("n", "[c", function()
+  if vim.wo.diff then
+    vim.cmd.normal({ vim.v.count1 .. "[c", bang = true })
+  else
+    load()
+    require("treesitter-context").go_to_context(vim.v.count1)
+  end
+end, { desc = "Previous diff change or enclosing context" })

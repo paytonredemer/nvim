@@ -60,7 +60,6 @@ pack.keymap("n", "<leader>dK", load, function() require("dap").up() end, { desc 
 pack.keymap("n", "<leader>dL", load, function() require("dap").run_last() end, { desc = "Run Last" })
 pack.keymap("n", "<leader>dp", load, function() require("dap").pause() end, { desc = "Pause" })
 pack.keymap("n", "<leader>dr", load, function() require("dap").repl.toggle() end, { desc = "Toggle REPL" })
-pack.keymap("n", "<leader>ds", load, function() require("dap").session() end, { desc = "Session" })
 pack.keymap("n", "<leader>dt", load, function() require("dap").terminate() end, { desc = "Terminate" })
 pack.keymap("n", "<leader>du", load, function() require("dap-view").toggle() end, { desc = "Toggle dap-view" })
 -- stylua: ignore end

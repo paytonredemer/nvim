@@ -21,7 +21,6 @@ vim.api.nvim_create_autocmd({ "BufReadPre", "BufNewFile" }, {
           map("v", "<leader>hs", function() gs.stage_hunk({ vim.fn.line("."), vim.fn.line("v") }) end, "[H]unk [S]tage")
           map("v", "<leader>hr", function() gs.reset_hunk({ vim.fn.line("."), vim.fn.line("v") }) end, "[H]unk [R]eset")
           map("n", "<leader>hS", gs.stage_buffer, "[H]unk [S]tage Buffer")
-          map("n", "<leader>hu", gs.stage_hunk, "[H]unk Toggle Stage")
           map("n", "<leader>hR", gs.reset_buffer, "[H]unk [R]eset Buffer")
           map("n", "<leader>hp", gs.preview_hunk, "[H]unk [P]review")
           map("n", "<leader>gb", function() gs.blame_line({ full = true }) end, "[G]it [B]lame")
