@@ -35,16 +35,10 @@
 
           neovimNightly = pkgs.neovim-unwrapped;
 
-          treesitterBundle = pkgs.vimPlugins.nvim-treesitter.withAllGrammars;
-          treesitterFiles = pkgs.symlinkJoin {
-            name = "nvim-treesitter-files";
-            paths = [ treesitterBundle ] ++ treesitterBundle.dependencies;
+          treesitterRuntime = pkgs.symlinkJoin {
+            name = "nvim-treesitter-runtime";
+            paths = pkgs.vimPlugins.nvim-treesitter.withAllGrammars.dependencies;
           };
-          treesitterRuntime = pkgs.runCommand "nvim-treesitter-runtime" { } ''
-            mkdir -p "$out"
-            ln -s "${treesitterFiles}/parser" "$out/parser"
-            ln -s "${treesitterFiles}/queries" "$out/queries"
-          '';
 
           runtimePackages =
             with pkgs;
