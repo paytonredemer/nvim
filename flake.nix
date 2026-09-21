@@ -130,6 +130,36 @@
               echo "Neovim is using the live config at $NVIM_CONFIG_DIR"
             '';
           };
+
+          checks = {
+            formatting =
+              pkgs.runCommand "nvim-formatting"
+                {
+                  nativeBuildInputs = [
+                    pkgs.stylua
+                    pkgs.nixfmt
+                  ];
+                }
+                ''
+                  cd ${self}
+                  stylua --check .
+                  nixfmt --check flake.nix
+                  touch "$out"
+                '';
+
+            lua-syntax =
+              pkgs.runCommand "nvim-lua-syntax"
+                {
+                  nativeBuildInputs = [ pkgs.luajit ];
+                }
+                ''
+                  cd ${self}
+                  find . -name '*.lua' -print0 | while IFS= read -r -d "" file; do
+                    luajit -b "$file" /dev/null
+                  done
+                  touch "$out"
+                '';
+          };
         in
         {
           package = wrappedNeovim;
@@ -138,12 +168,14 @@
             program = "${wrappedNeovim}/bin/nvim";
             meta.description = "Payton's Neovim configuration";
           };
-          inherit devShell;
+          inherit devShell checks;
         };
 
       outputsBySystem = nixpkgs.lib.genAttrs systems perSystem;
     in
     {
+      checks = nixpkgs.lib.mapAttrs (_: output: output.checks) outputsBySystem;
+
       packages = nixpkgs.lib.mapAttrs (_: output: {
         default = output.package;
       }) outputsBySystem;

@@ -17,6 +17,9 @@ The shell runs Neovim nightly against the current working tree, so Lua changes
 are available immediately. It also provides `lua-language-server`, `nixd`,
 `nixfmt`, and `stylua`.
 
+Run `nix flake check` to check Lua and Nix formatting and compile every Lua
+file for syntax errors. These checks do not start Neovim or install plugins.
+
 The system configuration pins this repository in its `flake.lock`. Update that
 input and rebuild the system to deploy changes.
 
