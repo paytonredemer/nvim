@@ -37,7 +37,9 @@
 
           treesitterRuntime = pkgs.symlinkJoin {
             name = "nvim-treesitter-runtime";
-            paths = pkgs.vimPlugins.nvim-treesitter.withAllGrammars.dependencies;
+            paths =
+              pkgs.vimPlugins.nvim-treesitter.withAllGrammars.dependencies
+              ++ lib.attrValues pkgs.vimPlugins.nvim-treesitter.queries;
           };
 
           runtimePackages =
