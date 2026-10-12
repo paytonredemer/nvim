@@ -1,6 +1,7 @@
 vim.loader.enable()
 
 local config_dir = vim.env.NVIM_CONFIG_DIR or vim.fn.stdpath("config")
+vim.env.MYVIMRC = vim.env.MYVIMRC or vim.fs.joinpath(config_dir, "init.lua")
 vim.opt.runtimepath:prepend(config_dir)
 vim.opt.runtimepath:append(vim.fs.joinpath(config_dir, "after"))
 vim.o.packlockfile = vim.fs.joinpath(config_dir, "nvim-pack-lock.json")
